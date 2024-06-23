@@ -1,4 +1,4 @@
 CONT_NAME=tensorflow-gpu
 V_MOUNT=/home/python
 
-docker exec tensorflow-gpu python $V_MOUNT/$1
+docker exec $CONT_NAME python $V_MOUNT/$1
