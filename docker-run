@@ -1,0 +1,14 @@
+CONT_NAME=tensorflow-gpu
+CONT_FILTER=$(docker container ls -q -f name=$CONT_NAME)
+
+if [ "$CONT_FILTER" != "" ]; then
+   docker kill $CONT_NAME
+fi
+
+sleep 0.5
+
+docker run --name $CONT_NAME -v ${PWD}/:/home/python/ -it --rm -d tensorflow/tensorflow:latest-gpu  \
+   bash -c "
+   cd /home/python &&
+   pip install -r requirements.txt &&
+   sleep infinity"
