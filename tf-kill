@@ -1,0 +1,6 @@
+CONT_NAME=tensorflow-gpu
+CONT_FILTER=$(docker container ls -q -f name=$CONT_NAME)
+
+if [ "$CONT_FILTER" != "" ]; then
+   docker kill $CONT_NAME
+fi
