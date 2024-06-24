@@ -1,0 +1,7 @@
+#!/bin/bash
+# Author: Andika Ageng P.
+
+CONT_NAME=tensorflow-gpu
+V_MOUNT=/home/python
+
+docker exec $CONT_NAME python $V_MOUNT/$1
