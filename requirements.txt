@@ -1,2 +1,0 @@
-# For adding new packages (without the #)
-# keras>=3.0.5 (example)
