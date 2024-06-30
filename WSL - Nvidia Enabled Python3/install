@@ -1,14 +1,16 @@
 #!/bin/bash
-# Author: Septian Pramana R.
+
+#Author: Septian Pramana R.
+#Author: Andika Ageng P.
 
 sudo apt-get update
-sudo apt-get install pciutils
+sudo apt-get install -y pciutils
 
 # Install Docker
 # Based on https://docs.docker.com/engine/install/ubuntu/
 
 # Add Docker's official GPG key:
-sudo apt-get install ca-certificates curl
+sudo apt-get install -y ca-certificates curl
 sudo install -m 0755 -d /etc/apt/keyrings
 sudo curl -fsSL https://download.docker.com/linux/ubuntu/gpg -o /etc/apt/keyrings/docker.asc
 sudo chmod a+r /etc/apt/keyrings/docker.asc
@@ -20,7 +22,7 @@ echo \
   sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
 sudo apt-get update
 
-sudo apt-get install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
+sudo apt-get install -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
 
 sudo usermod -aG docker $USER
 
@@ -45,8 +47,10 @@ sudo apt-get update
 sudo apt-get install -y nvidia-container-toolkit
 
 sudo nvidia-ctk runtime configure --runtime=docker
-sudo systemctl restart docker
+# =========================================================
 
+# Setup Docker
+sudo systemctl restart docker
 newgrp docker
 
 docker create \
@@ -57,3 +61,49 @@ docker create \
 	--runtime=nvidia --gpus all \
     tensorflow/tensorflow:latest-gpu-jupyter
 # =========================================================
+
+# Setup directory
+# Check if /opt exists, if not, create it
+if [ ! -d /opt ]; then
+    sudo mkdir /opt
+fi
+
+# Check if /opt/bin exists, if not, create it
+if [ ! -d /opt/bin ]; then
+    sudo mkdir /opt/bin
+fi
+# =========================================================
+
+# Deploy exec script
+# Create EXEC run
+sudo echo "#!/bin/bash" >> /opt/bin/tf-run
+sudo echo "docker exec -w \"\${PWD}\" -it tensorflow-gpu \"\${@}\"" >> /opt/bin/tf-run
+
+# Create Service Start
+sudo echo "#!/bin/bash" >> /opt/bin/tf-start
+sudo echo "docker start tensorflow-gpu" >> /opt/bin/tf-start
+sudo echo "docker exec tensorflow-gpu jupyter server list" >> /opt/bin/tf-start
+
+# Create Service Stop
+sudo echo "#!/bin/bash" >> /opt/bin/tf-stop
+sudo echo "docker stop tensorflow-gpu" >> /opt/bin/tf-stop
+# =========================================================
+
+# Configure PATH
+sudo chmod -R 755 /opt/bin
+sudo echo "export PATH=/opt/bin:${PATH}" >> .bashrc
+export PATH="/opt/bin:${PATH}"
+# =========================================================
+
+
+echo
+echo
+echo
+echo
+echo "========== TF Help =========="
+echo "To start service: tf-start"
+echo "To stop service: tf-stop"
+echo "To run command inside container: tf-run"
+echo "example 1: tf-run python -c \"import tensorflow as tf; print(tf.config.list_physical_devices('GPU'))\""
+echo "example 2: tf-run python example.py"
+echo "example 3: tf-run ls -l"
