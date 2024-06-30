@@ -104,6 +104,6 @@ echo "========== TF Help =========="
 echo "To start service: tf-start
 echo "To stop service: tf-stop
 echo "To run command inside container: "tf-run"
-echo "example 1: tf-run python -c "import tensorflow as tf; print(\"Num GPUs Available: \", len(tf.config.list_physical_devices('GPU')))"
-echo "example 2: tf-run python example.py
-echo "example 3: tf-run ls -l
+echo "example 1: tf-run python -c \"import tensorflow as tf; print(\\\"Num GPUs Available: \\\", len(tf.config.list_physical_devices('GPU')))\""
+echo "example 2: tf-run python example.py"
+echo "example 3: tf-run ls -l"
